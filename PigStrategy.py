@@ -77,7 +77,28 @@ class PigStrategy:
             ax.set_zlabel('my turn points')
             plt.show()
 
-def make_animation(policy, f):
+def plot_policy(policy):
+    """
+    Creates a voxel plot of a policy
+
+    ...
+    
+    Parameters:
+    -----------
+    policy : str
+        name of policy
+    """
+    with open('data/{}_policy.npy'.format(policy), 'rb') as f:
+        policy_data = np.load(f)
+
+    ax = plt.figure(figsize=(10,10)).add_subplot(projection='3d')
+    _ = ax.voxels(policy_data)
+    ax.set_xlabel('my points')
+    ax.set_ylabel('opponents points')
+    ax.set_zlabel('my turn points')
+    plt.show()
+
+def make_animation(policy):
     """
     Creates and stores a .gif animation of a policy
 
@@ -87,16 +108,14 @@ def make_animation(policy, f):
     -----------
     policy : str
         name of policy
-    f : str
-        target filename of output .gif
     """
 
     with open('data/{}_policy.npy'.format(policy), 'rb') as f:
-        policy = np.load(f)
+        policy_data = np.load(f)
     
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
-    _ = ax.voxels(policy)
+    _ = ax.voxels(policy_data)
     ax.set_xlabel('my points')
     ax.set_ylabel('your points')
     ax.set_zlabel('my turn points')
@@ -104,13 +123,13 @@ def make_animation(policy, f):
     frames = 360
 
     def tick(i):
-        print(i/360*100, '%') 
-        ax.view_init(30, i)
+        print(i/frames*100, '%') 
+        ax.view_init(30, 360-i)
 
     ani = animation.FuncAnimation(fig, tick, frames=frames, interval=5)
     
-    writergif = animation.PillowWriter(fps=3) 
-    ani.save('data/' + f, writer=writergif)
+    writergif = animation.PillowWriter(fps=30) 
+    ani.save('data/' + policy + '_policy.gif', writer=writergif)
 
 def make_binvox(policy):
     """

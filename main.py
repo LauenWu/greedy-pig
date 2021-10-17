@@ -2,7 +2,7 @@ from Game import Game
 from Player import Player
 import numpy as np
 import matplotlib.pyplot as plt
-from PigStrategy import make_binvox
+from PigStrategy import make_animation, plot_policy
 
 g = Game(Player('smart'), Player('hold20'))
 
@@ -19,5 +19,3 @@ for i in range(10000):
 
     if not victories_p2 == 0:
         print('odds p1', victories_p1/victories_p2)
-
-    
