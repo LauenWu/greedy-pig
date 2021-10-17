@@ -2,35 +2,22 @@ from Game import Game
 from Player import Player
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import animation
+from PigStrategy import make_binvox
 
-#g = Game(Player('human'), Player('smart'))
+g = Game(Player('smart'), Player('hold20'))
 
-#g.play()
+# compare players by calculating the odds
+victories_p1 = 0
+victories_p2 = 0
 
-with open('data/smart_policy.npy', 'rb') as f:
-    policy = np.load(f)
+for i in range(10000):
+    v = g.play()
+    if v:
+        victories_p1 += 1
+    else:
+        victories_p2 += 1
 
-def make_animation(policy, f, cumulative=False):
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-    print(ax)
-    _ = ax.voxels(policy)
-    ax.set_xlabel('my points')
-    ax.set_ylabel('your points')
-    ax.set_zlabel('my turn points')
-
-    frames = 360
-
-    def tick(i): 
-        ax.view_init(30, i)
-
-    ani = animation.FuncAnimation(fig, tick, frames=frames, interval=50)
-    
-    writergif = animation.PillowWriter(fps=3) 
-    ani.save(f, writer=writergif)
-    
-make_animation(policy, 'pig.gif')
-
+    if not victories_p2 == 0:
+        print('odds p1', victories_p1/victories_p2)
 
     

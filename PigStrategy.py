@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib import animation
+import binvox_rw
+from binvox_rw import Voxels
 
 class PigStrategy:
     def __init__(self, max_score=100):
@@ -60,8 +62,8 @@ class PigStrategy:
                 for k in np.arange(max_score-i):
                     s = (i,j,k)
 
-                    p_hold = 1-V[j,i+k,0]
-                    p_roll = p*(1 - V[j,i,0] + sum([self.reward(s_) for s_ in self.next_states(s)]))
+                    p_hold = 1-self.V[j,i+k,0]
+                    p_roll = p*(1 - self.V[j,i,0] + sum([self.reward(s_) for s_ in self.next_states(s)]))
                     self.policy[s] = p_roll > p_hold
 
         with open('data/policy.npy', 'wb') as f:
@@ -75,9 +77,58 @@ class PigStrategy:
             ax.set_zlabel('my turn points')
             plt.show()
 
-            #def AnimationFunction(frame):
-            #    ax.view_init(30, frame)
-            #    plt.draw()
+def make_animation(policy, f):
+    """
+    Creates and stores a .gif animation of a policy
+
+    ...
+    
+    Parameters:
+    -----------
+    policy : str
+        name of policy
+    f : str
+        target filename of output .gif
+    """
+
+    with open('data/{}_policy.npy'.format(policy), 'rb') as f:
+        policy = np.load(f)
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    _ = ax.voxels(policy)
+    ax.set_xlabel('my points')
+    ax.set_ylabel('your points')
+    ax.set_zlabel('my turn points')
+
+    frames = 360
+
+    def tick(i):
+        print(i/360*100, '%') 
+        ax.view_init(30, i)
+
+    ani = animation.FuncAnimation(fig, tick, frames=frames, interval=5)
+    
+    writergif = animation.PillowWriter(fps=3) 
+    ani.save('data/' + f, writer=writergif)
+
+def make_binvox(policy):
+    """
+    creates and stores a .binvox file of a policy
+
+    ...
+
+    Parameters:
+    -----------
+    policy : str
+        name of policy ('hold20', 'smart')
+    """
+    with open('data/{}_policy.npy'.format(policy), 'rb') as f:
+        policy_data = np.load(f)
+
+    v = Voxels(data=policy_data, dims=(100,100,100), translate=(0,0,0), scale=1, axis_order='xyz')
+    with open('data/{}_policy.binvox'.format(policy), 'wb') as f:
+        v.write(f)
 
 #smart player won  56679 of 100000 games
 #0.56679

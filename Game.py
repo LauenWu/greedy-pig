@@ -13,32 +13,52 @@ class Game():
     def __is_won(self) -> bool:
         return self.player_1.score >= self.max_score or self.player_2.score >= self.max_score
 
-    def player_play(self, player:Player, other:Player):
+    def player_turn(self, player:Player, other:Player, output:bool=False):
         s = 0
         while player.move(player.score, other.score):
             s = self.throw_die()
             if s == 1:
                 player.k = 0
-                print('k', player.k)
+                if output:
+                    print('k', player.k)
                 return
             player.k += s
-            print('k', player.k)
+            if output:
+                print('k', player.k)
         player.score += s
 
-    def play(self):
-        won = False
+    def play(self, output:bool=False) -> bool:
+        """
+        Start a single game
 
-        while not won:
-            self.player_play(self.player_1, self.player_2)
-            print('player 1:', self.player_1.score)
+        Returns
+        -------
+        winning_player : bool
+            True -> player 1 wins
+            False -> player 2 wins 
+        """
+        self.player_1.reset()
+        self.player_2.reset()
+
+        while True:
+            self.player_turn(self.player_1, self.player_2, output)
+
+            if output:
+                print('player 1:', self.player_1.score)
+
             if self.__is_won():
-                print('player 1 wins')
-                won = True
-                continue
-            self.player_play(self.player_2, self.player_1)
-            print('player 2:', self.player_2.score)
+                if output:
+                    print('player 1 wins')
+                return True
+
+            self.player_turn(self.player_2, self.player_1, output)
+
+            if output:
+                print('player 2:', self.player_2.score)
+
             if self.__is_won():
-                print('player 2 wins')
-                won = True
+                if output:
+                    print('player 2 wins')
+                return False
 
     
