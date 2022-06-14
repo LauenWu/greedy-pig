@@ -1,4 +1,4 @@
-# greedy-pig
+# Value Iteration for optimal Greedy-Pig-Play
 
 This article was inspired by the paper [Optimal Play of the Dice Game Pig -Todd W. Neller, Clifton G.M. Presser](https://cupola.gettysburg.edu/cgi/viewcontent.cgi?article=1003&context=csfac, "paper").
 
