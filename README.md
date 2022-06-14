@@ -11,10 +11,11 @@ The cool thing about Greedy Pig is, that each game state can be completely descr
 * my turn points (not save)
 * the opponents' points
 Imagine a cube where each dimension represents one of the numbers above. For each coordinate in that cube, we could decide whether we roll again or store our score. The result would be a cube consisting of booleans (True or False) which perfectly describes a player's strategy. This cube can be visualized and for a random strategy could look something like this:
-<gif>
+![](https://github.com/ML-pool/greedy-pig/blob/main/data/random_policy.png)
+
 At states where I'm inside a blue body, I play on, where there is no blue, I store my points. Notice how the upper triangle is missing. This is due to the fact that a player having, let's say, 80 points in the bank and 20 turn points, he wins automatically.
 
 There is an optimal way of playing Greedy Pig. It is not that simple to find, since you have to solve a system of 505'000 linear equations. Since that is for sure not a pen & paper task, I used `value iteration` (as recommended by Neller & Presser) to find the probability of winning in each state (see my implementation on GitHub). The optimal strategy (roll or store) derived from those probabilities then looks as follows:
-<gif>
+![](https://github.com/ML-pool/greedy-pig/blob/main/data/smart_policy.gif)
 
 It seems amazing that such a simple game can have an optimal strategy that complicated. I wonder what that may look like for a more complicated game like Monopoly...
